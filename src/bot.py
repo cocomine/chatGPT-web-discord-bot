@@ -212,11 +212,15 @@ def run_discord_bot():
         if isReplyAll:
             if message.author == client.user:
                 return
+
+            discord_channel_id = os.getenv("DISCORD_CHANNEL_ID")
             username = str(message.author)
             user_message = str(message.content)
             channel = str(message.channel)
-            logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
-            await send_message(message, user_message)
+
+            if discord_channel_id == channel.id:
+                logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
+                await send_message(message, user_message)
     
     TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
