@@ -218,7 +218,7 @@ def run_discord_bot():
             user_message = str(message.content)
             channel = str(message.channel)
 
-            if discord_channel_id == channel.id:
+            if discord_channel_id == message.channel.id:
                 logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
                 await send_message(message, user_message)
     
