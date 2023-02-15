@@ -1,14 +1,12 @@
-# ChatGPT Discord Bot
+ChatGPT Discord Bot
+===
 
-> ### Build your own Discord bot using ChatGPT
+Modify by cocomine. 
+
+New Function
 ---
-> **Warning**
->
-> #### 2023-02-10 Update: ChatGPT model but requires payment
-> #### 2023-02-08 Update: ChatGPT API is highly unstable now
-> #### 2023-02-03 Update: ChatGPT API working again
-> #### 2023-02-02 Update: OpenAI has closed ChatGPT API, temporarily switching to using GPT-3 model
-> #### 2023-02-01 Update: Now using the official ChatGPT API
+Channels that restrict message processing
+
 
 ## Features
 
