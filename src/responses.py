@@ -46,9 +46,9 @@ async def handle_response(user_message: str, message: discord.Message, isreplyal
     async with channel.typing():
         respone = await ask(user_message)
         for data in respone:
-            output_msg = data["message"][len(prev_msg):]  # get response
+            output_msg = data["message"]  # get response
 
-            if len(output_msg) > 1900:
+            if len(output_msg) > 0:
                 if my_message is None:
                     if message is None and channel is not None:
                         my_message = await channel.send(output_msg)
