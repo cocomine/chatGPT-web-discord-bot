@@ -7,7 +7,8 @@ from src import log
 logger = log.setup_logger(__name__)
 
 isPrivate = False
-isReplyAll = False
+isReplyAll = True
+
 
 class aclient(discord.Client):
     def __init__(self) -> None:
@@ -15,19 +16,21 @@ class aclient(discord.Client):
         intents.message_content = True
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(self)
-        self.activity = discord.Activity(type=discord.ActivityType.watching, name="/chat | /help, Modify by cocomine")
+        self.activity = discord.Activity(type=discord.ActivityType.watching, name="/help | ChatGPT Web Model")
 
 
 async def send_message(message, user_message):
     global isReplyAll
+
     if not isReplyAll:
         author = message.user.id
         await message.response.defer(ephemeral=isPrivate)
     else:
         author = message.author.id
     try:
-        response = '> **' + user_message + '** - <@' + \
-            str(author) + '> \n\n'
+        await responses.handle_response(user_message, message, isReplyAll)
+
+        """
         response = f"{response}{await responses.handle_response(user_message)}"
         if len(response) > 1900:
             # Split the response into smaller chunks of no more than 1900 characters each(Discord limit is 2000 per chunk)
@@ -83,7 +86,7 @@ async def send_message(message, user_message):
             if isReplyAll:
                 await message.channel.send(response)
             else:
-                await message.followup.send(response)
+                await message.followup.send(response)"""
     except Exception as e:
         if isReplyAll:
             await message.channel.send("> **Error: Something went wrong, please try again later!**")
@@ -105,10 +108,14 @@ async def send_start_prompt(client):
                 prompt = f.read()
                 if (discord_channel_id):
                     logger.info(f"Send starting prompt with size {len(prompt)}")
-                    responseMessage = await responses.handle_response(prompt)
+
+                    channel = client.get_channel(int(discord_channel_id))
+                    await responses.handle_response(prompt, message=None, isreplyall=True, channel=channel)
+
+                    """responseMessage = await responses.handle_response(prompt)
                     channel = client.get_channel(int(discord_channel_id))
                     await channel.send(responseMessage)
-                    logger.info(f"Starting prompt response:{responseMessage}")
+                    logger.info(f"Starting prompt response:{responseMessage}")"""
                 else:
                     logger.info("No Channel selected. Skip sending starting prompt.")
         else:
@@ -142,7 +149,7 @@ def run_discord_bot():
         channel = str(interaction.channel)
         logger.info(
             f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
-        await send_message(interaction, user_message)
+        await send_message(interaction.message, user_message)
 
     @client.tree.command(name="private", description="Toggle private access")
     async def private(interaction: discord.Interaction):
@@ -185,7 +192,7 @@ def run_discord_bot():
                 "> **Info: Next, the bot will response to all message in the server. If you want to switch back to normal mode, use `/replyAll` again.**")
             logger.warning("\x1b[31mSwitch to replyAll mode\x1b[0m")
         isReplyAll = not isReplyAll
-            
+
     @client.tree.command(name="reset", description="Complete reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
         responses.chatbot.reset()
@@ -194,7 +201,7 @@ def run_discord_bot():
         logger.warning(
             "\x1b[31mChatGPT bot has been successfully reset\x1b[0m")
         await send_start_prompt(client)
-        
+
     @client.tree.command(name="help", description="Show help for the bot")
     async def help(interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=False)
@@ -221,7 +228,7 @@ def run_discord_bot():
             if int(discord_channel_id) == message.channel.id:
                 logger.info(f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
                 await send_message(message, user_message)
-    
+
     TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
     client.run(TOKEN)

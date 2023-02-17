@@ -5,7 +5,8 @@ Modify by cocomine.
 
 New Function
 ---
-Channels that restrict message processing
+Channels that restrict message processing.
+Switch to ChatGPT web model
 
 
 ## Features
