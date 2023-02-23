@@ -106,11 +106,11 @@ async def send_start_prompt(client):
         if os.path.isfile(prompt_path) and os.path.getsize(prompt_path) > 0:
             with open(prompt_path, "r") as f:
                 prompt = f.read()
-                if (discord_channel_id):
+                if discord_channel_id:
                     logger.info(f"Send starting prompt with size {len(prompt)}")
 
                     channel = client.get_channel(int(discord_channel_id))
-                    await responses.handle_response(prompt, message=None, isreplyall=True, channel=channel)
+                    await responses.handle_response(prompt, isreplyall=True, channel=channel)
 
                     """responseMessage = await responses.handle_response(prompt)
                     channel = client.get_channel(int(discord_channel_id))
@@ -195,7 +195,7 @@ def run_discord_bot():
 
     @client.tree.command(name="reset", description="Complete reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
-        responses.chatbot.reset()
+        responses.reset()
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send("> **Info: I have forgotten everything.**")
         logger.warning(
